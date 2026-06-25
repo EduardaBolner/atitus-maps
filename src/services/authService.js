@@ -1,21 +1,27 @@
 import axios from 'axios';
 
-const API_URL = 'https://two025-01-apisample.onrender.com/auth';
+const API_URL = `${import.meta.env.VITE_API_URL}/auth`;
+
+function extractMessage(error, fallback) {
+  if (error.response) {
+    const data = error.response.data;
+    return typeof data === 'string' && data.trim() ? data : fallback;
+  }
+  if (error.request) {
+    return 'Servidor indisponível. Verifique sua conexão e tente novamente.';
+  }
+  return fallback;
+}
 
 export async function signIn(email, password) {
   try {
     const response = await axios.post(`${API_URL}/signin`, { email, password });
     return response.data;
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 400) {
-        throw new Error('Requisição inválida.');
-      }
-      if (error.response.status === 401) {
-        throw new Error('Usuário ou senha incorretos.');
-      }
+    if (error.response?.status === 400 || error.response?.status === 401) {
+      throw new Error('E-mail ou senha incorretos.');
     }
-    throw new Error('Erro ao autenticar.');
+    throw new Error(extractMessage(error, 'Erro ao fazer login. Tente novamente.'));
   }
 }
 
@@ -24,14 +30,6 @@ export async function signUp(name, email, password) {
     const response = await axios.post(`${API_URL}/signup`, { name, email, password });
     return response.data;
   } catch (error) {
-    if (error.response) {
-      if (error.response.status === 400) {
-        throw new Error('Requisição inválida.');
-      }
-      if (error.response.status === 409) {
-        throw new Error('Usuário já cadastrado.');
-      }
-    }
-    throw new Error('Erro ao cadastrar usuário.');
+    throw new Error(extractMessage(error, 'Erro ao criar conta. Verifique os dados e tente novamente.'));
   }
 }

@@ -49,17 +49,14 @@ export function Login() {
 
   return (
     <div className="min-h-full bg-[#192853] flex flex-col items-center px-[40px] pb-8">
-      {/* Logo */}
       <div className="pt-6">
         <Logo size="large" />
       </div>
 
-      {/* Title */}
       <p className="text-white font-semibold text-[15px] text-center mt-4 mb-6">
-        Entre na sua Conta
+        Entre na sua conta
       </p>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[16px]">
         <Input
           label="Email"
@@ -80,19 +77,10 @@ export function Login() {
           icon={<LockIcon />}
         />
 
-        {/* Esqueci minha senha */}
-        <div className="flex justify-end -mt-2">
-          <button type="button" className="text-[#ffe14e] text-[15px] font-normal cursor-pointer bg-transparent border-none">
-            Esqueci minha senha
-          </button>
-        </div>
-
-        {/* Erro */}
         {erro && (
           <p className="text-red-400 text-sm text-center">{erro}</p>
         )}
 
-        {/* Botão Entrar */}
         <div className="mt-2">
           <Button type="submit" disabled={loading}>
             {loading ? "Entrando..." : "Entrar"}
@@ -100,13 +88,8 @@ export function Login() {
         </div>
       </form>
 
-      {/* Divider */}
-      <div className="w-full flex items-center gap-3 my-6">
-        <div className="flex-1 h-px bg-white/20" />
-        <div className="flex-1 h-px bg-white/20" />
-      </div>
+      <div className="w-full h-px bg-white/20 my-6" />
 
-      {/* Botão Cadastro */}
       <div className="w-full">
         <Link to="/register" className="w-full">
           <button
@@ -114,7 +97,7 @@ export function Login() {
             className="w-full h-[44px] rounded-[100px] bg-white border border-[#747775] flex items-center justify-center gap-2 text-[#1f1f1f] font-medium text-[15px] cursor-pointer hover:bg-gray-50 transition-colors"
           >
             <ArrowRightIcon />
-            Faça o seu cadastro!
+            Faça seu cadastro
           </button>
         </Link>
       </div>
