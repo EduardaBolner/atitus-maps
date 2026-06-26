@@ -77,10 +77,6 @@ export function Login() {
           icon={<LockIcon />}
         />
 
-<<<<<<< HEAD
-        {/* Erro */}
-=======
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
         {erro && (
           <p className="text-red-400 text-sm text-center">{erro}</p>
         )}
@@ -92,21 +88,6 @@ export function Login() {
         </div>
       </form>
 
-<<<<<<< HEAD
-      {/* Divider */}
-      <div className="w-full h-px bg-white/20 my-6" />
-
-      {/* Botão Cadastro — secundário, menor */}
-      <Link to="/register" className="w-full flex justify-center">
-        <button
-          type="button"
-          className="flex items-center gap-2 px-6 h-[38px] rounded-full bg-white border border-white text-[#192853] text-[13px] font-medium cursor-pointer hover:bg-gray-50 transition-colors"
-        >
-          <ArrowRightIcon />
-          Faça o seu cadastro!
-        </button>
-      </Link>
-=======
       <div className="w-full h-px bg-white/20 my-6" />
 
       <div className="w-full">
@@ -120,7 +101,6 @@ export function Login() {
           </button>
         </Link>
       </div>
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
     </div>
   );
 }
