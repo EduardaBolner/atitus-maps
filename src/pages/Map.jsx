@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
@@ -47,11 +47,6 @@ export const Map = () => {
   const [mapCenter, setMapCenter] = useState({ lat: -28.2624, lng: -52.4088 });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
-<<<<<<< HEAD
-  const [extras, setExtras] = useState({});
-  const markerClickedRef = useRef(false);
-=======
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -70,16 +65,7 @@ export const Map = () => {
     async function fetchMarkers() {
       try {
         const data = await getPoints(token);
-<<<<<<< HEAD
-        const stored = JSON.parse(localStorage.getItem("evenza_eventos") || "{}");
-        const normalize = (s) => s?.trim().toLowerCase();
-        const filtered = data.filter((m) =>
-          Object.values(stored).some((ex) => normalize(ex.titulo) === normalize(m.title))
-        );
-        setMarkers(filtered);
-=======
         setMarkers(data);
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
       } catch (e) {
         console.log(e.message);
       }
@@ -97,36 +83,11 @@ export const Map = () => {
     anchor: new window.google.maps.Point(12, 22),
   } : null;
 
-<<<<<<< HEAD
-  const handleMapClick = () => {
-    if (markerClickedRef.current) {
-      markerClickedRef.current = false;
-      return;
-    }
-    setSelectedMarker(null);
-  };
-
-  // Eventos do localStorage como fallback para busca
-  const localEventos = Object.values(extras);
-
-  // Filtra markers pelo texto de busca; se não há markers ainda, busca no localStorage
-  const filteredMarkers = markers.length > 0
-    ? markers.filter((m) => m.title.toLowerCase().includes(search.toLowerCase()))
-    : localEventos
-        .filter((ex) => ex.titulo?.toLowerCase().includes(search.toLowerCase()))
-        .map((ex, i) => ({ id: `local-${i}`, title: ex.titulo, position: null }));
-
-  // Últimos 10: prefere markers da API, cai para localStorage
-  const last10 = markers.length > 0
-    ? markers.slice(-10).reverse()
-    : localEventos.slice(-10).reverse().map((ex, i) => ({ id: `local-${i}`, title: ex.titulo, position: null }));
-=======
   const filteredMarkers = markers.filter((m) =>
     m.title.toLowerCase().includes(search.toLowerCase())
   );
 
   const last10 = markers.slice(-10).reverse();
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
 
   return (
     <div className="flex flex-col h-full bg-[#eff8ff] relative">
@@ -243,7 +204,7 @@ export const Map = () => {
                 position={marker.position}
                 title={marker.title}
                 icon={customMarkerIcon}
-                onClick={() => { markerClickedRef.current = true; setSelectedMarker(marker); }}
+                onClick={() => setSelectedMarker(marker)}
               />
             ))}
 
@@ -282,11 +243,8 @@ export const Map = () => {
                       <span style={{ color: "#888", fontSize: 11 }}>{selectedMarker.categories.join(", ")}</span>
                     </div>
                   )}
-                  {getExtra(selectedMarker)?.inscricao === "Pago" && getExtra(selectedMarker)?.valor && (
-                    <p style={{ color: "#192853", fontSize: 11, fontWeight: "600", margin: "4px 0 0" }}>💰 R$ {parseFloat(getExtra(selectedMarker).valor).toFixed(2)}</p>
-                  )}
-                  {getExtra(selectedMarker)?.inscricao && getExtra(selectedMarker).inscricao !== "Pago" && (
-                    <p style={{ color: "#888", fontSize: 11, margin: "2px 0 0" }}>🎟 {getExtra(selectedMarker).inscricao}</p>
+                  {selectedMarker.registrationType && (
+                    <p style={{ color: "#888", fontSize: 11, margin: "2px 0 0" }}>🎟 {selectedMarker.registrationType}</p>
                   )}
                 </div>
               </InfoWindow>

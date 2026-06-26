@@ -78,38 +78,6 @@ function RowField({ icon, placeholder, type = "text", value, onChange, onBlur })
   );
 }
 
-function SectionLabel({ children }) {
-  return (
-    <p className="text-[13px] font-bold text-[#192853] uppercase tracking-widest mb-1">
-      {children}
-    </p>
-  );
-}
-
-function Chips({ items, selected, onToggle, single }) {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
-        <button
-          key={item}
-          type="button"
-          onClick={() => single
-            ? onToggle(item === selected ? "" : item)
-            : onToggle(item)
-          }
-          className={`px-4 py-[7px] rounded-full text-[13px] font-medium transition-all ${
-            (single ? selected === item : selected.includes(item))
-              ? "bg-[#192853] text-white"
-              : "bg-[#e8edf5] text-[#192853]"
-          }`}
-        >
-          {item}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export function CreateEvent() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -127,15 +95,10 @@ export function CreateEvent() {
   const [localizacao, setLocalizacao] = useState("");
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
-  const [geocodingStatus, setGeocodingStatus] = useState("");
   const [site, setSite] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [acessibilidade, setAcessibilidade] = useState([]);
   const [inscricao, setInscricao] = useState("");
-<<<<<<< HEAD
-  const [valor, setValor] = useState("");
-=======
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
   const [imagem, setImagem] = useState(null);
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
@@ -188,28 +151,6 @@ export function CreateEvent() {
     reader.readAsDataURL(file);
   };
 
-  const geocodeAddress = async (address) => {
-    if (!address.trim()) return;
-    setGeocodingStatus("buscando...");
-    try {
-      const key = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-      const res = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${key}`
-      );
-      const json = await res.json();
-      if (json.status === "OK" && json.results[0]) {
-        const { lat: newLat, lng: newLng } = json.results[0].geometry.location;
-        setLat(String(newLat.toFixed(6)));
-        setLng(String(newLng.toFixed(6)));
-        setGeocodingStatus("✓ Localização encontrada");
-      } else {
-        setGeocodingStatus("Endereço não encontrado");
-      }
-    } catch {
-      setGeocodingStatus("Erro ao buscar endereço");
-    }
-  };
-
   const toggleChip = (list, setList, value) => {
     setList((prev) => prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]);
   };
@@ -226,12 +167,6 @@ export function CreateEvent() {
 
     setLoading(true);
     try {
-<<<<<<< HEAD
-      const saved = await postPoint(token, { descricao: titulo, latitude, longitude });
-      const extras = JSON.parse(localStorage.getItem("evenza_eventos") || "{}");
-      extras[saved.id ?? titulo] = { titulo, descricao, data, horario, localizacao, site, categorias, acessibilidade, inscricao, valor: inscricao === "Pago" ? valor : "", imagem };
-      localStorage.setItem("evenza_eventos", JSON.stringify(extras));
-=======
       const payload = {
         name: titulo,
         description: descricao || null,
@@ -249,7 +184,6 @@ export function CreateEvent() {
 
       await postPoint(token, payload);
 
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
       navigate("/map");
     } catch (err) {
       setErro(err.message);
@@ -261,88 +195,6 @@ export function CreateEvent() {
   const hasLocation = lat && lng;
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen bg-[#eff8ff] flex flex-col pb-[80px]">
-
-      {/* Header */}
-      <div className="flex items-center justify-center px-5 pt-10 pb-4">
-        <p className="text-[#192853] font-bold text-[17px]">Cadastro de Eventos</p>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 flex flex-col gap-4">
-
-        {/* Imagem */}
-        <div
-          onClick={() => imageInputRef.current?.click()}
-          className="w-full h-[170px] rounded-[18px] overflow-hidden relative cursor-pointer bg-[#192853]/80"
-        >
-          {imagem ? (
-            <img src={imagem} alt="capa" className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-[#ffe14e]/20 flex items-center justify-center">
-                <UploadIcon color="#ffe14e" />
-              </div>
-              <p className="text-[#ffe14e] text-[13px] font-medium">Adicionar imagem do evento</p>
-            </div>
-          )}
-          {imagem && (
-            <div className="absolute inset-0 bg-black/20" />
-          )}
-          <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImage} />
-        </div>
-
-        {/* Sobre o Evento */}
-        <div className="bg-white rounded-[18px] px-4 pt-4 pb-3 flex flex-col gap-3 shadow-sm">
-          <SectionLabel>Sobre o Evento</SectionLabel>
-
-          <div>
-            <p className="text-[13px] font-semibold text-[#192853] mb-1">Título <span className="text-red-500">*</span></p>
-            <input
-              type="text"
-              placeholder="Ex: Festival de Verão 2026"
-              value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
-              className="w-full border border-[#dde6f0] rounded-[10px] px-3 h-[44px] text-[15px] text-[#192853] outline-none placeholder:text-[#b0bec5] focus:border-[#192853] bg-[#f7fafd]"
-            />
-          </div>
-
-          <div>
-            <p className="text-[13px] font-semibold text-[#192853] mb-1">Descrição</p>
-            <textarea
-              placeholder="Conte mais sobre o evento..."
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              rows={3}
-              className="w-full border border-[#dde6f0] rounded-[10px] px-3 py-2 text-[15px] text-[#192853] outline-none placeholder:text-[#b0bec5] resize-none focus:border-[#192853] bg-[#f7fafd]"
-            />
-          </div>
-        </div>
-
-        {/* Detalhes */}
-        <div className="bg-white rounded-[18px] px-4 shadow-sm">
-          <RowField icon={<CalendarIcon />} placeholder="Data" type="date" value={data} onChange={(e) => setData(e.target.value)} />
-          <RowField icon={<ClockIcon />} placeholder="Horário" type="time" value={horario} onChange={(e) => setHorario(e.target.value)} />
-          <RowField
-            icon={<LocationIcon />}
-            placeholder="Localização"
-            value={localizacao}
-            onChange={(e) => { setLocalizacao(e.target.value); setGeocodingStatus(""); }}
-            onBlur={() => geocodeAddress(localizacao)}
-          />
-          <RowField icon={<LinkIcon />} placeholder="Site ou Rede Social" value={site} onChange={(e) => setSite(e.target.value)} />
-        </div>
-        {geocodingStatus && (
-          <p className={`text-[12px] ml-2 -mt-2 ${geocodingStatus.startsWith("✓") ? "text-green-500" : "text-gray-400"}`}>
-            {geocodingStatus}
-          </p>
-        )}
-
-        {/* Categoria */}
-        <div className="bg-white rounded-[18px] px-4 py-4 shadow-sm">
-          <SectionLabel>Categoria <span className="text-red-400">*</span></SectionLabel>
-          <Chips items={CATEGORIAS} selected={categorias} onToggle={(v) => toggleChip(categorias, setCategorias, v)} />
-=======
     <>
       {showMapPicker && (
         <div className="fixed inset-0 z-[100] flex flex-col">
@@ -399,56 +251,9 @@ export function CreateEvent() {
               Confirmar localização
             </button>
           </div>
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
         </div>
       )}
 
-<<<<<<< HEAD
-        {/* Acessibilidade */}
-        <div className="bg-white rounded-[18px] px-4 py-4 shadow-sm">
-          <SectionLabel>Acessibilidade</SectionLabel>
-          <Chips items={ACESSIBILIDADE} selected={acessibilidade} onToggle={(v) => toggleChip(acessibilidade, setAcessibilidade, v)} />
-        </div>
-
-        {/* Inscrições */}
-        <div className="bg-white rounded-[18px] px-4 py-4 shadow-sm">
-          <SectionLabel>Inscrições</SectionLabel>
-          <Chips items={INSCRICOES} selected={inscricao} onToggle={(v) => { setInscricao(v); if (v !== "Pago") setValor(""); }} single />
-
-          {inscricao === "Pago" && (
-            <div className="mt-3">
-              <p className="text-[13px] font-semibold text-[#192853] mb-1">Valor do ingresso</p>
-              <div className="flex items-center border border-[#dde6f0] rounded-[10px] px-3 h-[44px] focus-within:border-[#192853] bg-[#f7fafd]">
-                <span className="text-[#192853] text-[15px] mr-1 font-medium">R$</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="0,00"
-                  value={valor}
-                  onChange={(e) => setValor(e.target.value)}
-                  className="flex-1 bg-transparent text-[#192853] text-[15px] outline-none placeholder:text-[#b0bec5]"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
-        {erro && <p className="text-red-500 text-sm text-center">{erro}</p>}
-
-        <div className="flex flex-col gap-3 pb-4">
-          <button type="button" onClick={handleSubmit} disabled={loading}
-            className="w-full h-[52px] rounded-full bg-[#ffe14e] text-[#192853] font-bold text-[16px] flex items-center justify-center gap-2 shadow-md hover:brightness-105 active:scale-[0.98] transition-all disabled:opacity-60">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#192853"/>
-            </svg>
-            {loading ? "Publicando..." : "Publicar Evento!"}
-          </button>
-          <p className="text-center text-[13px] text-[#192853]/40 cursor-pointer hover:text-[#192853]/70" onClick={() => navigate("/map")}>
-            Cancelar
-          </p>
-        </div>
-=======
       <div className="min-h-screen bg-white flex flex-col pb-[80px]">
         <div className="flex-1 overflow-y-auto px-5 pt-8">
 
@@ -462,7 +267,7 @@ export function CreateEvent() {
               <img src={imagem} alt="capa" className="w-full h-full object-cover" />
             ) : (
               <>
-                <ImageIcon />
+                <UploadIcon color="#bbb" />
                 <p className="text-[13px] text-[#bbb] mt-2">Adicionar imagem do evento</p>
               </>
             )}
@@ -566,7 +371,6 @@ export function CreateEvent() {
         </div>
 
         <Navbar />
->>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
       </div>
     </>
   );
