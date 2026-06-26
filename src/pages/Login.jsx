@@ -49,17 +49,14 @@ export function Login() {
 
   return (
     <div className="min-h-full bg-[#192853] flex flex-col items-center px-[40px] pb-8">
-      {/* Logo */}
       <div className="pt-6">
         <Logo size="large" />
       </div>
 
-      {/* Title */}
       <p className="text-white font-semibold text-[15px] text-center mt-4 mb-6">
-        Entre na sua Conta
+        Entre na sua conta
       </p>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[16px]">
         <Input
           label="Email"
@@ -80,12 +77,14 @@ export function Login() {
           icon={<LockIcon />}
         />
 
+<<<<<<< HEAD
         {/* Erro */}
+=======
+>>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
         {erro && (
           <p className="text-red-400 text-sm text-center">{erro}</p>
         )}
 
-        {/* Botão Entrar */}
         <div className="mt-2">
           <Button type="submit" disabled={loading}>
             {loading ? "Entrando..." : "Entrar"}
@@ -93,6 +92,7 @@ export function Login() {
         </div>
       </form>
 
+<<<<<<< HEAD
       {/* Divider */}
       <div className="w-full h-px bg-white/20 my-6" />
 
@@ -106,6 +106,21 @@ export function Login() {
           Faça o seu cadastro!
         </button>
       </Link>
+=======
+      <div className="w-full h-px bg-white/20 my-6" />
+
+      <div className="w-full">
+        <Link to="/register" className="w-full">
+          <button
+            type="button"
+            className="w-full h-[44px] rounded-[100px] bg-white border border-[#747775] flex items-center justify-center gap-2 text-[#1f1f1f] font-medium text-[15px] cursor-pointer hover:bg-gray-50 transition-colors"
+          >
+            <ArrowRightIcon />
+            Faça seu cadastro
+          </button>
+        </Link>
+      </div>
+>>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
     </div>
   );
 }

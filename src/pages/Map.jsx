@@ -38,6 +38,7 @@ const SearchIcon = () => (
   </svg>
 );
 
+
 export const Map = () => {
   const { token, logout } = useAuth();
   const navigate = useNavigate();
@@ -46,8 +47,11 @@ export const Map = () => {
   const [mapCenter, setMapCenter] = useState({ lat: -28.2624, lng: -52.4088 });
   const [search, setSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+<<<<<<< HEAD
   const [extras, setExtras] = useState({});
   const markerClickedRef = useRef(false);
+=======
+>>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -60,20 +64,22 @@ export const Map = () => {
         () => {}
       );
     }
-    const stored = JSON.parse(localStorage.getItem("evenza_eventos") || "{}");
-    setExtras(stored);
   }, []);
 
   useEffect(() => {
     async function fetchMarkers() {
       try {
         const data = await getPoints(token);
+<<<<<<< HEAD
         const stored = JSON.parse(localStorage.getItem("evenza_eventos") || "{}");
         const normalize = (s) => s?.trim().toLowerCase();
         const filtered = data.filter((m) =>
           Object.values(stored).some((ex) => normalize(ex.titulo) === normalize(m.title))
         );
         setMarkers(filtered);
+=======
+        setMarkers(data);
+>>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
       } catch (e) {
         console.log(e.message);
       }
@@ -91,6 +97,7 @@ export const Map = () => {
     anchor: new window.google.maps.Point(12, 22),
   } : null;
 
+<<<<<<< HEAD
   const handleMapClick = () => {
     if (markerClickedRef.current) {
       markerClickedRef.current = false;
@@ -113,26 +120,18 @@ export const Map = () => {
   const last10 = markers.length > 0
     ? markers.slice(-10).reverse()
     : localEventos.slice(-10).reverse().map((ex, i) => ({ id: `local-${i}`, title: ex.titulo, position: null }));
+=======
+  const filteredMarkers = markers.filter((m) =>
+    m.title.toLowerCase().includes(search.toLowerCase())
+  );
 
-  // Carrossel: todos os markers com imagem salva, ou todos se não filtrado
-  const carouselItems = markers.filter((m) => {
-    const key = Object.keys(extras).find(
-      (k) => extras[k].titulo === m.title
-    );
-    return !!key;
-  });
-
-  const getExtra = (marker) => {
-    const key = Object.keys(extras).find((k) => extras[k].titulo === marker.title) ?? marker.id;
-    return extras[key] || extras[marker.id] || null;
-  };
+  const last10 = markers.slice(-10).reverse();
+>>>>>>> 25ea619cfa92f8e7ff10aab5b13c8e0441dbd36d
 
   return (
     <div className="flex flex-col h-full bg-[#eff8ff] relative">
 
-      {/* Topo: botão logout + barra de pesquisa */}
       <div className="absolute top-4 left-4 right-4 z-20 flex flex-col gap-2">
-        {/* Linha superior: espaço + botão sair */}
         <div className="flex justify-end">
           <button
             onClick={logout}
@@ -142,7 +141,6 @@ export const Map = () => {
           </button>
         </div>
 
-        {/* Barra de pesquisa abaixo, largura total */}
         <div className="flex items-center bg-white/80 backdrop-blur-sm border-2 border-[#ffe14e] rounded-full shadow-md h-[40px] px-3 gap-2">
           <SearchIcon />
           <input
@@ -155,25 +153,28 @@ export const Map = () => {
             className="flex-1 bg-transparent text-[#192853] text-[14px] outline-none placeholder:text-[#192853]/60 font-medium"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="text-[#192853]/50 text-xs">✕</button>
+            <button onClick={() => setSearch("")} className="text-[#192853]/50 flex items-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="currentColor"/>
+              </svg>
+            </button>
           )}
         </div>
       </div>
 
-      {/* Carrossel de eventos cadastrados */}
-      {carouselItems.length > 0 && !search && (
+      {markers.length > 0 && !search && (
         <div className="absolute top-[126px] left-0 right-0 z-10 px-3">
           <div className="flex gap-[9px] overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-            {carouselItems.map((m) => {
-              const ex = getExtra(m);
+            {markers.map((m) => {
+              const imagem = m.imageBase64;
               return (
                 <div
                   key={m.id}
                   onClick={() => { setSelectedMarker(m); setMapCenter(m.position); }}
                   className="w-[110px] h-[110px] rounded-[20px] shrink-0 overflow-hidden shadow-md relative cursor-pointer"
                 >
-                  {ex?.imagem ? (
-                    <img src={ex.imagem} alt={m.title} className="w-full h-full object-cover" />
+                  {imagem ? (
+                    <img src={imagem} alt={m.title} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-[#192853] flex items-center justify-center">
                       <span className="text-white text-[11px] font-bold text-center px-2">{m.title}</span>
@@ -188,8 +189,6 @@ export const Map = () => {
         </div>
       )}
 
-      {/* Resultados da pesquisa */}
-      {/* Dropdown de busca: ao focar mostra últimos 10, ao digitar filtra */}
       {(searchFocused || search) && (
         <div className="absolute top-[108px] left-4 right-4 z-20 bg-white rounded-2xl shadow-xl overflow-hidden">
           {(search ? filteredMarkers : last10).length > 0 ? (
@@ -200,15 +199,15 @@ export const Map = () => {
                 </p>
               )}
               {(search ? filteredMarkers : last10).map((m) => {
-                const ex = getExtra(m);
+                const imagem = m.imageBase64;
                 return (
                   <div
                     key={m.id}
                     onClick={() => { if (m.position) { setSelectedMarker(m); setMapCenter(m.position); } setSearch(""); setSearchFocused(false); }}
                     className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 active:bg-gray-100"
                   >
-                    {ex?.imagem ? (
-                      <img src={ex.imagem} alt={m.title} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    {imagem ? (
+                      <img src={imagem} alt={m.title} className="w-10 h-10 rounded-lg object-cover shrink-0" />
                     ) : (
                       <div className="w-10 h-10 rounded-lg bg-[#192853] flex items-center justify-center shrink-0">
                         <span className="text-white text-[11px] font-bold">{m.title[0]}</span>
@@ -216,8 +215,8 @@ export const Map = () => {
                     )}
                     <div>
                       <p className="text-[#192853] font-semibold text-[14px]">{m.title}</p>
-                      {ex?.localizacao && <p className="text-gray-400 text-[12px]">{ex.localizacao}</p>}
-                      {ex?.data && <p className="text-gray-300 text-[11px]">{ex.data}</p>}
+                      {m.locationName && <p className="text-gray-400 text-[12px]">{m.locationName}</p>}
+                      {m.eventDate && <p className="text-gray-300 text-[11px]">{m.eventDate}</p>}
                     </div>
                   </div>
                 );
@@ -229,14 +228,13 @@ export const Map = () => {
         </div>
       )}
 
-      {/* Mapa */}
       <div className="flex-1 w-full">
         {isLoaded ? (
           <GoogleMap
             mapContainerStyle={containerStyle}
             center={mapCenter}
             zoom={14}
-            onClick={handleMapClick}
+            onClick={() => setSelectedMarker(null)}
             options={{ styles: mapStyles, disableDefaultUI: true, zoomControl: false }}
           >
             {filteredMarkers.map((marker) => (
@@ -257,14 +255,32 @@ export const Map = () => {
               >
                 <div style={{ maxWidth: 190, padding: "4px 2px" }}>
                   <p style={{ fontWeight: "700", color: "#192853", fontSize: 13, margin: "0 0 4px" }}>{selectedMarker.title}</p>
-                  {getExtra(selectedMarker)?.descricao && (
-                    <p style={{ color: "#555", fontSize: 11, margin: "0 0 3px" }}>{getExtra(selectedMarker).descricao}</p>
+                  {selectedMarker.description && (
+                    <p style={{ color: "#555", fontSize: 11, margin: "0 0 3px" }}>{selectedMarker.description}</p>
                   )}
-                  {getExtra(selectedMarker)?.horario && (
-                    <p style={{ color: "#888", fontSize: 11, margin: "2px 0 0" }}>🕐 {getExtra(selectedMarker).horario}</p>
+                  {selectedMarker.eventTime && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, margin: "2px 0 0" }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="#888"/>
+                      </svg>
+                      <span style={{ color: "#888", fontSize: 11 }}>{selectedMarker.eventTime}</span>
+                    </div>
                   )}
-                  {getExtra(selectedMarker)?.localizacao && (
-                    <p style={{ color: "#888", fontSize: 11, margin: "2px 0 0" }}>📍 {getExtra(selectedMarker).localizacao}</p>
+                  {selectedMarker.locationName && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, margin: "2px 0 0" }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                        <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#888"/>
+                      </svg>
+                      <span style={{ color: "#888", fontSize: 11 }}>{selectedMarker.locationName}</span>
+                    </div>
+                  )}
+                  {selectedMarker.categories?.length > 0 && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, margin: "2px 0 0" }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                        <path d="M21.41 11.58L12.41 2.58C12.05 2.22 11.55 2 11 2H4C2.9 2 2 2.9 2 4V11C2 11.55 2.22 12.05 2.59 12.42L11.59 21.42C11.95 21.78 12.45 22 13 22C13.55 22 14.05 21.78 14.41 21.41L21.41 14.41C21.78 14.05 22 13.55 22 13C22 12.45 21.77 11.94 21.41 11.58ZM5.5 7C4.67 7 4 6.33 4 5.5C4 4.67 4.67 4 5.5 4C6.33 4 7 4.67 7 5.5C7 6.33 6.33 7 5.5 7Z" fill="#888"/>
+                      </svg>
+                      <span style={{ color: "#888", fontSize: 11 }}>{selectedMarker.categories.join(", ")}</span>
+                    </div>
                   )}
                   {getExtra(selectedMarker)?.inscricao === "Pago" && getExtra(selectedMarker)?.valor && (
                     <p style={{ color: "#192853", fontSize: 11, fontWeight: "600", margin: "4px 0 0" }}>💰 R$ {parseFloat(getExtra(selectedMarker).valor).toFixed(2)}</p>
@@ -285,7 +301,6 @@ export const Map = () => {
           </div>
         )}
       </div>
-
 
       <Navbar />
       <div className="h-[61px]" />

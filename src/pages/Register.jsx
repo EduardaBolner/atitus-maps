@@ -54,7 +54,6 @@ export function Register() {
 
   return (
     <div className="min-h-full bg-[#192853] flex flex-col items-center px-[40px] pb-8">
-      {/* Botão voltar */}
       <div className="w-full pt-6 flex items-center">
         <Link to="/login" className="flex items-center gap-1 text-white/70 hover:text-white text-sm">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -64,17 +63,14 @@ export function Register() {
         </Link>
       </div>
 
-      {/* Logo */}
       <div className="pt-2">
         <Logo size="small" />
       </div>
 
-      {/* Title */}
       <p className="text-white font-semibold text-[15px] text-center mt-2 mb-6">
-        Crie sua Conta
+        Crie sua conta
       </p>
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[16px]">
         <Input
           label="Nome"
@@ -113,12 +109,10 @@ export function Register() {
           icon={<LockIcon />}
         />
 
-        {/* Erro */}
         {erro && (
           <p className="text-red-400 text-sm text-center">{erro}</p>
         )}
 
-        {/* Botão Criar */}
         <div className="mt-2">
           <Button type="submit" disabled={loading}>
             {loading ? "Criando..." : "Criar"}
@@ -126,7 +120,6 @@ export function Register() {
         </div>
       </form>
 
-      {/* Link para Login */}
       <div className="w-full mt-4">
         <div className="w-full h-px bg-white/20 mb-4" />
         <p className="text-white text-[15px] text-center">
